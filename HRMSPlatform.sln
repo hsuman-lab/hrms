@@ -1,0 +1,67 @@
+
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.9.0.0
+MinimumVisualStudioVersion = 10.0.40219.1
+
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HRMSPlatform.SharedKernel", "src\HRMSPlatform.SharedKernel\HRMSPlatform.SharedKernel.csproj", "{11111111-0000-0000-0000-000000000001}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HRMSPlatform.Infrastructure", "src\HRMSPlatform.Infrastructure\HRMSPlatform.Infrastructure.csproj", "{11111111-0000-0000-0000-000000000002}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HRMSPlatform.Modules.TenantManagement", "src\HRMSPlatform.Modules.TenantManagement\HRMSPlatform.Modules.TenantManagement.csproj", "{11111111-0000-0000-0000-000000000003}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HRMSPlatform.Modules.IAM", "src\HRMSPlatform.Modules.IAM\HRMSPlatform.Modules.IAM.csproj", "{11111111-0000-0000-0000-000000000004}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HRMSPlatform.Modules.EmployeeManagement", "src\HRMSPlatform.Modules.EmployeeManagement\HRMSPlatform.Modules.EmployeeManagement.csproj", "{11111111-0000-0000-0000-000000000005}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HRMSPlatform.Modules.Onboarding", "src\HRMSPlatform.Modules.Onboarding\HRMSPlatform.Modules.Onboarding.csproj", "{11111111-0000-0000-0000-000000000006}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HRMSPlatform.Modules.LeaveManagement", "src\HRMSPlatform.Modules.LeaveManagement\HRMSPlatform.Modules.LeaveManagement.csproj", "{11111111-0000-0000-0000-000000000007}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HRMSPlatform.Modules.Attendance", "src\HRMSPlatform.Modules.Attendance\HRMSPlatform.Modules.Attendance.csproj", "{11111111-0000-0000-0000-000000000008}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HRMSPlatform.Modules.Payroll", "src\HRMSPlatform.Modules.Payroll\HRMSPlatform.Modules.Payroll.csproj", "{11111111-0000-0000-0000-000000000009}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HRMSPlatform.Modules.LMS", "src\HRMSPlatform.Modules.LMS\HRMSPlatform.Modules.LMS.csproj", "{11111111-0000-0000-0000-000000000010}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HRMSPlatform.Modules.Notifications", "src\HRMSPlatform.Modules.Notifications\HRMSPlatform.Modules.Notifications.csproj", "{11111111-0000-0000-0000-000000000011}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HRMSPlatform.Modules.Workflow", "src\HRMSPlatform.Modules.Workflow\HRMSPlatform.Modules.Workflow.csproj", "{11111111-0000-0000-0000-000000000012}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HRMSPlatform.Modules.Audit", "src\HRMSPlatform.Modules.Audit\HRMSPlatform.Modules.Audit.csproj", "{11111111-0000-0000-0000-000000000013}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HRMSPlatform.Modules.Reporting", "src\HRMSPlatform.Modules.Reporting\HRMSPlatform.Modules.Reporting.csproj", "{11111111-0000-0000-0000-000000000014}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HRMSPlatform.Modules.Billing", "src\HRMSPlatform.Modules.Billing\HRMSPlatform.Modules.Billing.csproj", "{11111111-0000-0000-0000-000000000015}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HRMSPlatform.API", "src\HRMSPlatform.API\HRMSPlatform.API.csproj", "{11111111-0000-0000-0000-000000000016}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HRMSPlatform.Tests.Unit", "tests\HRMSPlatform.Tests.Unit\HRMSPlatform.Tests.Unit.csproj", "{11111111-0000-0000-0000-000000000017}"
+EndProject
+
+Global
+  GlobalSection(SolutionConfigurationPlatforms) = preSolution
+    Debug|Any CPU = Debug|Any CPU
+    Release|Any CPU = Release|Any CPU
+  EndGlobalSection
+  GlobalSection(ProjectConfigurationPlatforms) = postSolution
+    {11111111-0000-0000-0000-000000000001}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+    {11111111-0000-0000-0000-000000000001}.Release|Any CPU.ActiveCfg = Release|Any CPU
+    {11111111-0000-0000-0000-000000000002}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+    {11111111-0000-0000-0000-000000000003}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+    {11111111-0000-0000-0000-000000000004}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+    {11111111-0000-0000-0000-000000000005}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+    {11111111-0000-0000-0000-000000000006}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+    {11111111-0000-0000-0000-000000000007}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+    {11111111-0000-0000-0000-000000000008}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+    {11111111-0000-0000-0000-000000000009}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+    {11111111-0000-0000-0000-000000000010}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+    {11111111-0000-0000-0000-000000000011}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+    {11111111-0000-0000-0000-000000000012}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+    {11111111-0000-0000-0000-000000000013}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+    {11111111-0000-0000-0000-000000000014}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+    {11111111-0000-0000-0000-000000000015}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+    {11111111-0000-0000-0000-000000000016}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+    {11111111-0000-0000-0000-000000000017}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+  EndGlobalSection
+EndGlobal
