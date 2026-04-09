@@ -9,6 +9,9 @@ import routes from './routes';
 
 const app = express();
 
+// Trust Vercel / reverse-proxy X-Forwarded-For headers
+app.set('trust proxy', 1);
+
 // Security headers
 app.use(helmet());
 
