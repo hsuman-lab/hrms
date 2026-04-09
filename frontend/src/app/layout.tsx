@@ -5,8 +5,8 @@ import { QueryProvider } from '@/components/providers/QueryProvider';
 import { Toaster } from 'react-hot-toast';
 
 export const metadata: Metadata = {
-  title: 'HRMS Portal',
-  description: 'Human Resource Management System',
+  title: 'HRMSPlatform — Modern HR SaaS',
+  description: 'HRMSPlatform unifies employee management, payroll, attendance, leave, learning, and workflows in a single multi-tenant SaaS.',
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
