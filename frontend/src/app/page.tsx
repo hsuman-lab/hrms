@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import {
   Users, Clock, CalendarCheck, IndianRupee, BarChart3,
-  Shield, BookOpen, Workflow, Bell, CheckCircle2,
+  Shield, BookOpen, Workflow, Bell, Building2, CheckCircle2,
   ArrowRight, Star, Globe, Zap, Lock, ChevronDown,
 } from 'lucide-react';
 import { useState } from 'react';
