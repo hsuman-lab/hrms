@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import {
   LayoutDashboard, Clock, CalendarDays, Users, CheckSquare,
-  Settings, DollarSign, BarChart3, FileText, Building2, LogOut,
+  IndianRupee, BarChart3, FileText, Building2, LogOut, BookOpen,
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { RoleName } from '@/types';
@@ -17,17 +17,19 @@ interface NavItem {
 }
 
 const NAV_ITEMS: NavItem[] = [
-  { label: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
-  { label: 'Attendance', href: '/attendance', icon: Clock },
-  { label: 'My Leaves', href: '/leave', icon: CalendarDays },
-  { label: 'My Payroll', href: '/payroll', icon: DollarSign },
-  { label: 'Team', href: '/manager/team', icon: Users, roles: ['EMPLOYEE_MANAGER', 'HR', 'HR_MANAGER'] },
-  { label: 'Approvals', href: '/manager/approvals', icon: CheckSquare, roles: ['EMPLOYEE_MANAGER', 'HR', 'HR_MANAGER'] },
-  { label: 'Employees', href: '/hr/employees', icon: Users, roles: ['HR', 'HR_MANAGER'] },
-  { label: 'Leave Types', href: '/hr/leave-types', icon: FileText, roles: ['HR', 'HR_MANAGER'] },
-  { label: 'Departments', href: '/hr/departments', icon: Building2, roles: ['HR', 'HR_MANAGER'] },
-  { label: 'Analytics', href: '/hr/analytics', icon: BarChart3, roles: ['HR_MANAGER'] },
-  { label: 'Payroll Reports', href: '/finance', icon: DollarSign, roles: ['FINANCE', 'HR_MANAGER'] },
+  { label: 'Dashboard',      href: '/dashboard',      icon: LayoutDashboard },
+  { label: 'Attendance',     href: '/attendance',     icon: Clock },
+  { label: 'My Leaves',      href: '/leave',          icon: CalendarDays },
+  { label: 'My Payroll',     href: '/payroll',        icon: IndianRupee },
+  { label: 'My Learning',    href: '/learning',       icon: BookOpen },
+  { label: 'Team',           href: '/manager/team',   icon: Users,       roles: ['EMPLOYEE_MANAGER', 'HR', 'HR_MANAGER'] },
+  { label: 'Approvals',      href: '/manager/approvals', icon: CheckSquare, roles: ['EMPLOYEE_MANAGER', 'HR', 'HR_MANAGER'] },
+  { label: 'Employees',      href: '/hr/employees',   icon: Users,       roles: ['HR', 'HR_MANAGER'] },
+  { label: 'L&D Courses',    href: '/hr/learning',    icon: BookOpen,    roles: ['HR', 'HR_MANAGER'] },
+  { label: 'Leave Types',    href: '/hr/leave-types', icon: FileText,    roles: ['HR', 'HR_MANAGER'] },
+  { label: 'Departments',    href: '/hr/departments', icon: Building2,   roles: ['HR', 'HR_MANAGER'] },
+  { label: 'Analytics',      href: '/hr/analytics',   icon: BarChart3,   roles: ['HR_MANAGER'] },
+  { label: 'Payroll Reports',href: '/finance',        icon: IndianRupee, roles: ['FINANCE', 'HR_MANAGER'] },
 ];
 
 export default function Sidebar() {

@@ -30,6 +30,7 @@ model User {
   employee      Employee?
   leave_types   LeaveType[]
   audit_logs    AuditLog[]
+  courses       Course[]
 
   @@map("users")
 }
@@ -67,6 +68,7 @@ model Employee {
   leave_requests    LeaveRequest[]
   leave_approvals   LeaveApproval[]
   payroll_records   PayrollRecord[]
+  enrollments       CourseEnrollment[]
 
   @@map("employees")
 }
@@ -167,6 +169,40 @@ model PayrollRecord {
   @@unique([employee_id, payroll_month, payroll_year])
   @@index([payroll_year, payroll_month])
   @@map("payroll_records")
+}
+
+model Course {
+  id          String             @id @default(uuid())
+  title       String
+  description String?
+  category    String             @default("GENERAL")
+  is_mandatory Boolean           @default(false)
+  duration_mins Int?
+  created_by  String?
+  creator     User?              @relation(fields: [created_by], references: [id])
+  created_at  DateTime           @default(now())
+  updated_at  DateTime           @updatedAt
+  enrollments CourseEnrollment[]
+
+  @@map("courses")
+}
+
+model CourseEnrollment {
+  id           String   @id @default(uuid())
+  course_id    String
+  course       Course   @relation(fields: [course_id], references: [id], onDelete: Cascade)
+  employee_id  String
+  employee     Employee @relation(fields: [employee_id], references: [id], onDelete: Cascade)
+  status       String   @default("NOT_STARTED")  // NOT_STARTED | IN_PROGRESS | COMPLETED
+  progress_pct Int      @default(0)
+  completed_at DateTime?
+  due_date     DateTime?
+  assigned_at  DateTime @default(now())
+  updated_at   DateTime @updatedAt
+
+  @@unique([course_id, employee_id])
+  @@index([employee_id, status])
+  @@map("course_enrollments")
 }
 
 model AuditLog {

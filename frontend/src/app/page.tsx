@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import {
-  Users, Clock, CalendarCheck, DollarSign, BarChart3,
+  Users, Clock, CalendarCheck, IndianRupee, BarChart3,
   Shield, BookOpen, Workflow, Bell, Building2, CheckCircle2,
   ArrowRight, Star, Globe, Zap, Lock, ChevronDown,
 } from 'lucide-react';
@@ -30,7 +30,7 @@ const features = [
     color: 'bg-emerald-50 text-emerald-700',
   },
   {
-    icon: DollarSign,
+    icon: IndianRupee,
     title: 'Payroll Engine',
     description: 'Formula-based salary computation, country-specific tax plugins (India TDS), payslips, and compliance reports.',
     color: 'bg-cyan-50 text-cyan-700',
@@ -78,7 +78,7 @@ const features = [
     color: 'bg-teal-50 text-teal-700',
   },
   {
-    icon: DollarSign,
+    icon: IndianRupee,
     title: 'Billing & Subscriptions',
     description: 'Stripe-integrated seat-based billing with trial periods, plan upgrades, and automated invoicing.',
     color: 'bg-emerald-50 text-emerald-700',

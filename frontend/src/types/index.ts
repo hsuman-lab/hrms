@@ -124,6 +124,44 @@ export interface PayrollRecord {
   };
 }
 
+export interface Course {
+  id: string;
+  title: string;
+  description: string | null;
+  category: string;
+  is_mandatory: boolean;
+  duration_mins: number | null;
+  created_at: string;
+  updated_at: string;
+  _count?: { enrollments: number };
+  creator?: { employee?: { first_name: string | null; last_name: string | null } | null } | null;
+}
+
+export type EnrollmentStatus = 'NOT_STARTED' | 'IN_PROGRESS' | 'COMPLETED';
+
+export interface CourseEnrollment {
+  id: string;
+  course_id: string;
+  employee_id: string;
+  status: EnrollmentStatus;
+  progress_pct: number;
+  completed_at: string | null;
+  due_date: string | null;
+  assigned_at: string;
+  course: Course;
+  employee?: Pick<Employee, 'id' | 'first_name' | 'last_name' | 'employee_code'> & {
+    department?: { department_name: string } | null;
+  };
+}
+
+export interface LearningStats {
+  totalCourses: number;
+  mandatoryCourses: number;
+  totalEnrollments: number;
+  completed: number;
+  overdue: number;
+}
+
 export interface ApiResponse<T = unknown> {
   success: boolean;
   data?: T;

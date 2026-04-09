@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { DollarSign, Download, RefreshCw, TrendingUp } from 'lucide-react';
+import { IndianRupee, Download, RefreshCw, TrendingUp } from 'lucide-react';
 import DashboardLayout from '@/components/layout/DashboardLayout';
 import { Card, StatCard } from '@/components/ui/Card';
 import Button from '@/components/ui/Button';
@@ -14,6 +14,7 @@ import toast from 'react-hot-toast';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
 const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const fmt = (n: number) => `₹${n.toLocaleString('en-IN')}`;
 
 export default function FinancePage() {
   const queryClient = useQueryClient();
@@ -73,9 +74,9 @@ export default function FinancePage() {
     { key: 'paid_leave_days', header: 'Paid Leave', render: (r: PayrollRecord) => r.paid_leave_days ?? 0 },
     { key: 'unpaid_leave_days', header: 'Unpaid Leave', render: (r: PayrollRecord) => <span className="text-red-500">{r.unpaid_leave_days ?? 0}</span> },
     { key: 'absent_days', header: 'Absent', render: (r: PayrollRecord) => <span className="text-red-400">{r.absent_days ?? 0}</span> },
-    { key: 'salary_amount', header: 'Gross', render: (r: PayrollRecord) => `$${Number(r.salary_amount ?? 0).toLocaleString()}` },
-    { key: 'deductions', header: 'Deductions', render: (r: PayrollRecord) => <span className="text-red-500">-${Number(r.deductions ?? 0).toLocaleString()}</span> },
-    { key: 'net_salary', header: 'Net Salary', render: (r: PayrollRecord) => <span className="font-bold text-primary-700">${Number(r.net_salary ?? 0).toLocaleString()}</span> },
+    { key: 'salary_amount', header: 'Gross', render: (r: PayrollRecord) => fmt(Number(r.salary_amount ?? 0)) },
+    { key: 'deductions', header: 'Deductions', render: (r: PayrollRecord) => <span className="text-red-500">-{fmt(Number(r.deductions ?? 0))}</span> },
+    { key: 'net_salary', header: 'Net Salary', render: (r: PayrollRecord) => <span className="font-bold text-primary-700">{fmt(Number(r.net_salary ?? 0))}</span> },
   ];
 
   return (
@@ -107,9 +108,9 @@ export default function FinancePage() {
 
         {/* Summary Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <StatCard title="Total Gross Salary" value={`$${totalGross.toLocaleString()}`} subtitle={`${MONTHS[month - 1]} ${year}`} icon={DollarSign} color="primary" />
-          <StatCard title="Total Deductions" value={`$${totalDeductions.toLocaleString()}`} subtitle="Unpaid + Absent" icon={TrendingUp} color="red" />
-          <StatCard title="Total Net Payout" value={`$${totalNet.toLocaleString()}`} subtitle={`${records.length} employees`} icon={DollarSign} color="green" />
+          <StatCard title="Total Gross Salary" value={fmt(totalGross)} subtitle={`${MONTHS[month - 1]} ${year}`} icon={IndianRupee} color="primary" />
+          <StatCard title="Total Deductions" value={fmt(totalDeductions)} subtitle="Unpaid + Absent" icon={TrendingUp} color="red" />
+          <StatCard title="Total Net Payout" value={fmt(totalNet)} subtitle={`${records.length} employees`} icon={IndianRupee} color="green" />
         </div>
 
         {/* Yearly Trend */}
@@ -120,8 +121,8 @@ export default function FinancePage() {
               <BarChart data={summaryChartData}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#f0f9fa" />
                 <XAxis dataKey="month" tick={{ fontSize: 11 }} />
-                <YAxis tick={{ fontSize: 11 }} tickFormatter={(v) => `$${(v/1000).toFixed(0)}k`} />
-                <Tooltip formatter={(v: number) => [`$${v.toLocaleString()}`, 'Net Salary']} />
+                <YAxis tick={{ fontSize: 11 }} tickFormatter={(v) => `₹${(v/1000).toFixed(0)}k`} />
+                <Tooltip formatter={(v: number) => [fmt(v), 'Net Salary']} />
                 <Bar dataKey="netSalary" fill="#00ACC1" radius={[6, 6, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
@@ -139,7 +140,7 @@ export default function FinancePage() {
             </p>
           </div>
           <Table
-            columns={columns as Parameters<typeof Table>[0]['columns']}
+            columns={columns as unknown as Parameters<typeof Table>[0]['columns']}
             data={records as unknown as Record<string, unknown>[]}
             emptyMessage="No payroll data. Click Generate Payroll to create records."
             isLoading={isLoading}

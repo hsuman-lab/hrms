@@ -96,6 +96,36 @@ async function main() {
   }
   console.log('Sample attendance created');
 
+  // Mandatory L&D courses
+  const mandatoryCourses = await Promise.all([
+    prisma.course.upsert({
+      where: { id: 'course-posh-001' },
+      update: {},
+      create: { id: 'course-posh-001', title: 'POSH — Prevention of Sexual Harassment', description: 'Mandatory awareness training on Prevention, Prohibition and Redressal of Sexual Harassment at the Workplace (POSH Act 2013).', category: 'COMPLIANCE', is_mandatory: true, duration_mins: 60 },
+    }),
+    prisma.course.upsert({
+      where: { id: 'course-cobc-001' },
+      update: {},
+      create: { id: 'course-cobc-001', title: 'COBC — Code of Business Conduct', description: 'Code of Business Conduct & Ethics — covering conflict of interest, anti-bribery, confidentiality, and professional standards.', category: 'COMPLIANCE', is_mandatory: true, duration_mins: 45 },
+    }),
+    prisma.course.upsert({
+      where: { id: 'course-it-001' },
+      update: {},
+      create: { id: 'course-it-001', title: 'IT Mandatory — Information Security Awareness', description: 'Covers password hygiene, phishing awareness, data classification, acceptable use policy, and incident reporting.', category: 'IT_SECURITY', is_mandatory: true, duration_mins: 30 },
+    }),
+  ]);
+  console.log('Mandatory courses created (POSH, COBC, IT Mandatory)');
+
+  // Enroll every employee in every mandatory course
+  const allEmployeeIds = (await prisma.employee.findMany({ select: { id: true } })).map((e) => e.id);
+  for (const course of mandatoryCourses) {
+    await prisma.courseEnrollment.createMany({
+      data: allEmployeeIds.map((employee_id) => ({ course_id: course.id, employee_id })),
+      skipDuplicates: true,
+    });
+  }
+  console.log('All employees enrolled in mandatory courses');
+
   console.log('\nSeed complete! Test credentials:');
   console.log('  Employee:    employee@hrms.com   / password123');
   console.log('  Manager:     manager@hrms.com    / password123');
