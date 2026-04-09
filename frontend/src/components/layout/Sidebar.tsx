@@ -8,6 +8,7 @@ import {
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { RoleName } from '@/types';
+import HarshHRLogo from '@/components/ui/HarshHRLogo';
 
 interface NavItem {
   label: string;
@@ -41,16 +42,8 @@ export default function Sidebar() {
   return (
     <aside className="w-64 min-h-screen bg-white border-r border-primary-100 flex flex-col shadow-sm">
       {/* Logo */}
-      <div className="p-6 border-b border-primary-100">
-        <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-xl bg-primary-600 flex items-center justify-center">
-            <span className="text-white font-bold text-sm">HR</span>
-          </div>
-          <div>
-            <p className="font-bold text-primary-800 text-sm">HRMS Portal</p>
-            <p className="text-xs text-primary-400">Human Resources</p>
-          </div>
-        </div>
+      <div className="p-5 border-b border-primary-100">
+        <HarshHRLogo size={34} textSize="base" />
       </div>
 
       {/* User info */}

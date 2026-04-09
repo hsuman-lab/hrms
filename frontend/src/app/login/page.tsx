@@ -5,10 +5,11 @@ import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { Eye, EyeOff, Mail, Lock, Building2 } from 'lucide-react';
+import { Eye, EyeOff, Mail, Lock } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import toast from 'react-hot-toast';
 import { AxiosError } from 'axios';
+import HarshHRLogo from '@/components/ui/HarshHRLogo';
 
 const loginSchema = z.object({
   email: z.string().email('Invalid email address'),
@@ -48,12 +49,9 @@ export default function LoginPage() {
     <div className="min-h-screen bg-gradient-to-br from-primary-50 via-white to-teal-50 flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         {/* Logo */}
-        <div className="text-center mb-8">
-          <div className="inline-flex w-16 h-16 rounded-2xl bg-primary-600 items-center justify-center mb-4 shadow-lg">
-            <Building2 className="w-8 h-8 text-white" />
-          </div>
-          <h1 className="text-3xl font-bold text-gray-800">HRMS Portal</h1>
-          <p className="text-gray-500 mt-1">Human Resource Management System</p>
+        <div className="flex flex-col items-center mb-8">
+          <HarshHRLogo size={56} textSize="xl" />
+          <p className="text-gray-500 mt-2 text-sm">Human Resource Management System</p>
         </div>
 
         {/* Login Card */}
