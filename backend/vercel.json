@@ -1,12 +1,17 @@
 {
   "version": 2,
-  "buildCommand": "npx prisma generate",
+  "buildCommand": "npm install && npx prisma generate",
   "builds": [
     {
       "src": "api/index.ts",
       "use": "@vercel/node",
       "config": {
-        "includeFiles": ["prisma/**", "src/**", "node_modules/.prisma/**", "node_modules/@prisma/client/**"]
+        "includeFiles": [
+          "prisma/**",
+          "src/**",
+          "node_modules/.prisma/**",
+          "node_modules/@prisma/client/**"
+        ]
       }
     }
   ],
@@ -15,5 +20,10 @@
       "src": "/(.*)",
       "dest": "api/index.ts"
     }
-  ]
+  ],
+  "env": {
+    "DATABASE_URL": "@database_url",
+    "JWT_SECRET": "@jwt_secret",
+    "NODE_ENV": "production"
+  }
 }
