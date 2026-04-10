@@ -107,23 +107,23 @@ export default function DepartmentsPage() {
         )}
       </div>
 
-      <Modal isOpen={showModal} onClose={closeModal} title={editing ? 'Edit Department' : 'New Department'} size="sm">
+      <Modal isOpen={showModal} onClose={closeModal} title={editing ? 'Edit Department' : 'Add New Department'} size="sm">
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <Input
             label="Department Name"
             required
-            placeholder="e.g. Engineering, Finance, HR"
-            {...register('name', { required: 'Department name is required' })}
+            placeholder="e.g. Engineering, Finance, Human Resources"
+            {...register('name', { required: 'Please enter a department name' })}
             error={errors.name?.message}
           />
           <div className="space-y-1.5">
             <label className="block text-sm font-medium text-gray-700">
-              Description <span className="text-red-500">*</span>
+              What does this department do? <span className="text-red-500">*</span>
             </label>
             <textarea
-              {...register('description', { required: 'Description is required' })}
+              {...register('description', { required: 'Please describe what this department does' })}
               rows={3}
-              placeholder="Brief description of this department's function"
+              placeholder="e.g. Responsible for product design, development, and engineering operations"
               className={`w-full px-3.5 py-2.5 text-sm rounded-xl border focus:outline-none focus:ring-2 focus:ring-primary-500 resize-none transition-colors ${
                 errors.description ? 'border-red-300 focus:ring-red-400' : 'border-gray-200 hover:border-primary-300'
               }`}
@@ -132,7 +132,7 @@ export default function DepartmentsPage() {
           </div>
           <div className="flex gap-3 pt-2">
             <Button type="submit" isLoading={createMutation.isPending || updateMutation.isPending} className="flex-1">
-              {editing ? 'Update' : 'Create'}
+              {editing ? 'Save Changes' : 'Add Department'}
             </Button>
             <Button type="button" variant="secondary" onClick={closeModal}>Cancel</Button>
           </div>
