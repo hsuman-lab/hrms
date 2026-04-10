@@ -37,7 +37,7 @@ export async function downloadSalarySlipPdf(record: PayrollRecord, employeeName:
   doc.setTextColor(255, 255, 255);
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(18);
-  doc.text('HarshHR', 14, 12);
+  doc.text('MyHR', 14, 12);
 
   doc.setFont('helvetica', 'normal');
   doc.setFontSize(9);

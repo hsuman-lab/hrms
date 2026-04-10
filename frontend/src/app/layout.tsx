@@ -5,8 +5,8 @@ import { QueryProvider } from '@/components/providers/QueryProvider';
 import { Toaster } from 'react-hot-toast';
 
 export const metadata: Metadata = {
-  title: 'HarshHR — Modern HR SaaS',
-  description: 'HarshHR unifies employee management, payroll, attendance, leave, learning, and workflows in a single multi-tenant SaaS.',
+  title: 'MyHR — Modern HR SaaS',
+  description: 'MyHR unifies employee management, payroll, attendance, leave, learning, and workflows in a single multi-tenant SaaS.',
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

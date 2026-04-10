@@ -7,7 +7,7 @@ import {
   ArrowRight, Star, Globe, Zap, Lock, ChevronDown,
 } from 'lucide-react';
 import { useState } from 'react';
-import HarshHRLogo from '@/components/ui/HarshHRLogo';
+import MyHRLogo from '@/components/ui/MyHRLogo';
 
 // ─── Data ─────────────────────────────────────────────────────────────────────
 
@@ -138,7 +138,7 @@ const faqs = [
   },
   {
     q: 'Can I integrate with existing tools?',
-    a: 'HarshHR provides a REST API and publishes integration events via Kafka. Connectors for Slack, Google Workspace, and Zoho are on the roadmap.',
+    a: 'MyHR provides a REST API and publishes integration events via Kafka. Connectors for Slack, Google Workspace, and Zoho are on the roadmap.',
   },
 ];
 
@@ -172,7 +172,7 @@ export default function LandingPage() {
       <nav className="fixed top-0 inset-x-0 z-50 bg-white/90 backdrop-blur border-b border-gray-100">
         <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
           {/* Logo */}
-          <HarshHRLogo size={32} textSize="lg" />
+          <MyHRLogo size={32} textSize="lg" />
           {/* Links */}
           <div className="hidden md:flex items-center gap-8 text-sm font-medium text-gray-600">
             <a href="#features" className="hover:text-primary-600 transition-colors">Features</a>
@@ -207,7 +207,7 @@ export default function LandingPage() {
           </h1>
 
           <p className="text-xl text-gray-500 max-w-2xl mx-auto mb-10 leading-relaxed">
-            HarshHR unifies employee management, payroll, attendance, leave, learning, and workflows
+            MyHR unifies employee management, payroll, attendance, leave, learning, and workflows
             in a single multi-tenant SaaS — so your HR team can focus on people, not paperwork.
           </p>
 
@@ -280,7 +280,7 @@ export default function LandingPage() {
       <section className="py-24 px-6 bg-gradient-to-br from-primary-700 to-teal-800 text-white relative overflow-hidden">
         <div className="max-w-5xl mx-auto relative">
           <div className="text-center mb-14">
-            <h2 className="text-4xl font-extrabold mb-4">Why HR teams love HarshHR</h2>
+            <h2 className="text-4xl font-extrabold mb-4">Why HR teams love MyHR</h2>
             <p className="text-primary-100 max-w-xl mx-auto">
               Built on modern architecture — Domain-Driven Design, event-driven, zero-downtime deploys.
             </p>
@@ -401,7 +401,7 @@ export default function LandingPage() {
         <div className="max-w-3xl mx-auto text-center">
           <h2 className="text-4xl font-extrabold text-gray-900 mb-4">Ready to modernise your HR?</h2>
           <p className="text-gray-500 mb-10 text-lg">
-            Join 200+ companies already running on HarshHR. Start your 30-day free trial today.
+            Join 200+ companies already running on MyHR. Start your 30-day free trial today.
           </p>
           <Link
             href="/login"
@@ -415,8 +415,8 @@ export default function LandingPage() {
       {/* ── Footer ────────────────────────────────────────────────────────── */}
       <footer className="border-t border-gray-100 bg-gray-50 py-10 px-6">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
-          <HarshHRLogo size={28} textSize="base" />
-          <p className="text-sm text-gray-400">© {new Date().getFullYear()} HarshHR. All rights reserved.</p>
+          <MyHRLogo size={28} textSize="base" />
+          <p className="text-sm text-gray-400">© {new Date().getFullYear()} MyHR. All rights reserved.</p>
           <div className="flex items-center gap-6 text-sm text-gray-400">
             <a href="#" className="hover:text-primary-600 transition-colors">Privacy</a>
             <a href="#" className="hover:text-primary-600 transition-colors">Terms</a>
