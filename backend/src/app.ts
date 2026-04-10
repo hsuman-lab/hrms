@@ -15,15 +15,19 @@ app.set('trust proxy', 1);
 // Security headers
 app.use(helmet());
 
-// CORS — supports comma-separated list: FRONTEND_URL=https://a.up.railway.app,https://b.up.railway.app
+// CORS — allow explicit origins + all *.vercel.app preview URLs
 const allowedOrigins = (process.env.FRONTEND_URL || 'http://localhost:3000')
   .split(',')
   .map((o) => o.trim());
 
 app.use(cors({
   origin: (origin, callback) => {
-    // Allow requests with no origin (mobile apps, curl, server-to-server)
-    if (!origin || allowedOrigins.includes(origin)) {
+    if (!origin) return callback(null, true); // curl / server-to-server
+    const isAllowed =
+      allowedOrigins.includes(origin) ||
+      /^https:\/\/.*\.vercel\.app$/.test(origin) ||
+      origin === 'http://localhost:3000';
+    if (isAllowed) {
       callback(null, true);
     } else {
       callback(new Error(`CORS: origin ${origin} not allowed`));
