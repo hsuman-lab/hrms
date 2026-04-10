@@ -56,11 +56,18 @@ export class EmployeeService {
     firstName: string;
     lastName: string;
     phone?: string;
+    whatsappNo?: string;
     departmentId?: string;
     managerId?: string;
     joiningDate?: string;
     baseSalary?: number;
     employeeCode: string;
+    salaryStructure?: {
+      basicPct?: number; hraPct?: number; daPct?: number;
+      specialAllowancePct?: number; otherAllowance?: number;
+      pfEmployeePct?: number; esiApplicable?: boolean;
+      professionalTax?: number; tdsMonthly?: number;
+    };
   }) {
     const existingUser = await prisma.user.findUnique({ where: { email: data.email } });
     if (existingUser) throw new AppError('Email already registered', 409);
@@ -82,12 +89,30 @@ export class EmployeeService {
         first_name: data.firstName,
         last_name: data.lastName,
         phone: data.phone,
+        whatsapp_no: data.whatsappNo,
         department_id: data.departmentId,
         manager_id: data.managerId,
         joining_date: data.joiningDate ? new Date(data.joiningDate) : undefined,
         base_salary: data.baseSalary,
       },
       include: { user: { select: { email: true, role: true } }, department: true },
+    });
+
+    // Initialize salary structure (default Indian structure)
+    const ss = data.salaryStructure ?? {};
+    await prisma.salaryStructure.create({
+      data: {
+        employee_id: employee.id,
+        basic_pct:              ss.basicPct             ?? 40,
+        hra_pct:                ss.hraPct               ?? 20,
+        da_pct:                 ss.daPct                ?? 10,
+        special_allowance_pct:  ss.specialAllowancePct  ?? 20,
+        other_allowance:        ss.otherAllowance       ?? 0,
+        pf_employee_pct:        ss.pfEmployeePct        ?? 12,
+        esi_applicable:         ss.esiApplicable        ?? false,
+        professional_tax:       ss.professionalTax      ?? 200,
+        tds_monthly:            ss.tdsMonthly           ?? 0,
+      },
     });
 
     // Initialize leave balances
@@ -103,7 +128,50 @@ export class EmployeeService {
       skipDuplicates: true,
     });
 
+    // Enroll in mandatory L&D courses
+    const mandatoryCourses = await prisma.course.findMany({ where: { is_mandatory: true }, select: { id: true } });
+    if (mandatoryCourses.length > 0) {
+      await prisma.courseEnrollment.createMany({
+        data: mandatoryCourses.map((c) => ({ course_id: c.id, employee_id: employee.id })),
+        skipDuplicates: true,
+      });
+    }
+
     return employee;
+  }
+
+  async updateSalaryStructure(employeeId: string, data: {
+    basicPct?: number; hraPct?: number; daPct?: number;
+    specialAllowancePct?: number; otherAllowance?: number;
+    pfEmployeePct?: number; esiApplicable?: boolean;
+    professionalTax?: number; tdsMonthly?: number;
+  }) {
+    return prisma.salaryStructure.upsert({
+      where: { employee_id: employeeId },
+      update: {
+        basic_pct:              data.basicPct,
+        hra_pct:                data.hraPct,
+        da_pct:                 data.daPct,
+        special_allowance_pct:  data.specialAllowancePct,
+        other_allowance:        data.otherAllowance,
+        pf_employee_pct:        data.pfEmployeePct,
+        esi_applicable:         data.esiApplicable,
+        professional_tax:       data.professionalTax,
+        tds_monthly:            data.tdsMonthly,
+      },
+      create: {
+        employee_id:            employeeId,
+        basic_pct:              data.basicPct             ?? 40,
+        hra_pct:                data.hraPct               ?? 20,
+        da_pct:                 data.daPct                ?? 10,
+        special_allowance_pct:  data.specialAllowancePct  ?? 20,
+        other_allowance:        data.otherAllowance       ?? 0,
+        pf_employee_pct:        data.pfEmployeePct        ?? 12,
+        esi_applicable:         data.esiApplicable        ?? false,
+        professional_tax:       data.professionalTax      ?? 200,
+        tds_monthly:            data.tdsMonthly           ?? 0,
+      },
+    });
   }
 
   async updateEmployee(id: string, data: {

@@ -53,6 +53,7 @@ model Employee {
   first_name        String?
   last_name         String?
   phone             String?
+  whatsapp_no       String?
   department_id     String?
   department        Department?    @relation(fields: [department_id], references: [id])
   manager_id        String?
@@ -69,8 +70,33 @@ model Employee {
   leave_approvals   LeaveApproval[]
   payroll_records   PayrollRecord[]
   enrollments       CourseEnrollment[]
+  salary_structure  SalaryStructure?
+  reimbursements    Reimbursement[]
+  reimbursement_approvals ReimbursementApproval[]
 
   @@map("employees")
+}
+
+// ── Indian Salary Structure ──────────────────────────────────────────────────
+model SalaryStructure {
+  id                  String   @id @default(uuid())
+  employee_id         String   @unique
+  employee            Employee @relation(fields: [employee_id], references: [id], onDelete: Cascade)
+  // Earnings (% of CTC or fixed)
+  basic_pct           Decimal  @default(40) @db.Decimal(5, 2)   // % of gross
+  hra_pct             Decimal  @default(20) @db.Decimal(5, 2)   // % of gross
+  da_pct              Decimal  @default(10) @db.Decimal(5, 2)   // % of gross
+  special_allowance_pct Decimal @default(20) @db.Decimal(5, 2)  // % of gross
+  other_allowance     Decimal  @default(0)  @db.Decimal(12, 2)  // fixed ₹
+  // Deductions
+  pf_employee_pct     Decimal  @default(12) @db.Decimal(5, 2)   // % of basic (employee share)
+  esi_applicable      Boolean  @default(false)                   // ESI if gross <= 21000
+  professional_tax    Decimal  @default(200) @db.Decimal(8, 2)  // fixed monthly ₹
+  tds_monthly         Decimal  @default(0)  @db.Decimal(12, 2)  // estimated monthly TDS
+  created_at          DateTime @default(now())
+  updated_at          DateTime @updatedAt
+
+  @@map("salary_structures")
 }
 
 model Attendance {
@@ -150,6 +176,36 @@ model LeaveApproval {
   @@map("leave_approvals")
 }
 
+// ── Reimbursements ───────────────────────────────────────────────────────────
+model Reimbursement {
+  id           String                  @id @default(uuid())
+  employee_id  String
+  employee     Employee                @relation(fields: [employee_id], references: [id])
+  category     String                  // TRAVEL | FOOD | MEDICAL | ACCOMMODATION | OTHER
+  amount       Decimal                 @db.Decimal(12, 2)
+  description  String
+  bill_date    DateTime                @db.Date
+  status       String                  @default("PENDING") // PENDING | APPROVED | REJECTED
+  applied_at   DateTime                @default(now())
+  approvals    ReimbursementApproval[]
+
+  @@index([employee_id, status])
+  @@map("reimbursements")
+}
+
+model ReimbursementApproval {
+  id                 String        @id @default(uuid())
+  reimbursement_id   String
+  reimbursement      Reimbursement @relation(fields: [reimbursement_id], references: [id], onDelete: Cascade)
+  approver_id        String
+  approver           Employee      @relation(fields: [approver_id], references: [id])
+  approval_status    String?
+  remarks            String?
+  approved_at        DateTime?
+
+  @@map("reimbursement_approvals")
+}
+
 model PayrollRecord {
   id                 String   @id @default(uuid())
   employee_id        String
@@ -161,8 +217,18 @@ model PayrollRecord {
   paid_leave_days    Int?
   unpaid_leave_days  Int?
   absent_days        Int?
-  salary_amount      Decimal? @db.Decimal(12, 2)
-  deductions         Decimal? @db.Decimal(12, 2)
+  salary_amount      Decimal? @db.Decimal(12, 2)  // gross
+  // Indian breakdown
+  basic              Decimal? @db.Decimal(12, 2)
+  hra                Decimal? @db.Decimal(12, 2)
+  da                 Decimal? @db.Decimal(12, 2)
+  special_allowance  Decimal? @db.Decimal(12, 2)
+  other_allowance    Decimal? @db.Decimal(12, 2)
+  pf_employee        Decimal? @db.Decimal(12, 2)
+  esi_employee       Decimal? @db.Decimal(12, 2)
+  professional_tax   Decimal? @db.Decimal(12, 2)
+  tds                Decimal? @db.Decimal(12, 2)
+  deductions         Decimal? @db.Decimal(12, 2)  // total deductions
   net_salary         Decimal? @db.Decimal(12, 2)
   generated_at       DateTime @default(now())
 
@@ -193,7 +259,7 @@ model CourseEnrollment {
   course       Course   @relation(fields: [course_id], references: [id], onDelete: Cascade)
   employee_id  String
   employee     Employee @relation(fields: [employee_id], references: [id], onDelete: Cascade)
-  status       String   @default("NOT_STARTED")  // NOT_STARTED | IN_PROGRESS | COMPLETED
+  status       String   @default("NOT_STARTED")
   progress_pct Int      @default(0)
   completed_at DateTime?
   due_date     DateTime?

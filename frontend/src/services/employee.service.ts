@@ -30,4 +30,8 @@ export const employeeService = {
     const res = await api.put<ApiResponse<Employee>>(`/employees/${id}`, data);
     return res.data.data!;
   },
+  isManager: async (): Promise<{ isManager: boolean; subordinateCount: number }> => {
+    const res = await api.get<ApiResponse<{ isManager: boolean; subordinateCount: number }>>('/employees/is-manager');
+    return res.data.data ?? { isManager: false, subordinateCount: 0 };
+  },
 };

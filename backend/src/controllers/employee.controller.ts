@@ -11,11 +11,35 @@ const createEmployeeSchema = z.object({
   firstName: z.string().min(1),
   lastName: z.string().min(1),
   phone: z.string().optional(),
+  whatsappNo: z.string().optional(),
   departmentId: z.string().min(1).optional(),
   managerId: z.string().min(1).optional(),
   joiningDate: z.string().optional(),
   baseSalary: z.number().positive().optional(),
   employeeCode: z.string().min(1),
+  salaryStructure: z.object({
+    basicPct: z.number().optional(),
+    hraPct: z.number().optional(),
+    daPct: z.number().optional(),
+    specialAllowancePct: z.number().optional(),
+    otherAllowance: z.number().optional(),
+    pfEmployeePct: z.number().optional(),
+    esiApplicable: z.boolean().optional(),
+    professionalTax: z.number().optional(),
+    tdsMonthly: z.number().optional(),
+  }).optional(),
+});
+
+const salaryStructureSchema = z.object({
+  basicPct: z.number().optional(),
+  hraPct: z.number().optional(),
+  daPct: z.number().optional(),
+  specialAllowancePct: z.number().optional(),
+  otherAllowance: z.number().optional(),
+  pfEmployeePct: z.number().optional(),
+  esiApplicable: z.boolean().optional(),
+  professionalTax: z.number().optional(),
+  tdsMonthly: z.number().optional(),
 });
 
 const updateEmployeeSchema = z.object({
@@ -78,6 +102,27 @@ export class EmployeeController {
     } catch (err) {
       next(err);
     }
+  }
+
+  async updateSalaryStructure(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const data = salaryStructureSchema.parse(req.body);
+      const result = await employeeService.updateSalaryStructure(req.params.id, data);
+      await logAudit(req.user?.userId, 'UPDATE_SALARY_STRUCTURE', 'Employee', req.params.id);
+      res.json({ success: true, data: result });
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  async hasSubordinates(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
+    try {
+      if (!req.user?.employeeId) { res.json({ success: true, data: { isManager: false } }); return; }
+      const count = await (await import('../config/database')).default.employee.count({
+        where: { manager_id: req.user.employeeId },
+      });
+      res.json({ success: true, data: { isManager: count > 0, subordinateCount: count } });
+    } catch (err) { next(err); }
   }
 
   async getTeam(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
