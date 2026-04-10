@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Plus, Pencil, CheckCircle, XCircle } from 'lucide-react';
+import { Plus, Pencil, CheckCircle, XCircle, AlertTriangle } from 'lucide-react';
 import DashboardLayout from '@/components/layout/DashboardLayout';
 import { Card } from '@/components/ui/Card';
 import Button from '@/components/ui/Button';
@@ -87,7 +87,11 @@ export default function LeaveTypesPage() {
                   </div>
                   <div className="flex justify-between text-sm items-center">
                     <span className="text-gray-500">Paid Leave</span>
-                    {lt.is_paid ? <CheckCircle className="w-4 h-4 text-green-500" /> : <XCircle className="w-4 h-4 text-gray-300" />}
+                    {lt.is_paid
+                      ? <CheckCircle className="w-4 h-4 text-green-500" />
+                      : <span className="flex items-center gap-1 text-xs font-semibold text-amber-700 bg-amber-50 px-2 py-0.5 rounded-full">
+                          <AlertTriangle className="w-3 h-3" /> Unpaid (LOP)
+                        </span>}
                   </div>
                   <div className="flex justify-between text-sm items-center">
                     <span className="text-gray-500">Carry Forward</span>
@@ -102,25 +106,35 @@ export default function LeaveTypesPage() {
 
       <Modal isOpen={showModal} onClose={closeModal} title={editing ? 'Edit Leave Type' : 'New Leave Type'} size="md">
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-          <Input label="Leave Name" {...register('leaveName', { required: 'Required' })} error={errors.leaveName?.message} />
+          <Input label="Leave Name" required {...register('leaveName', { required: 'Required' })} error={errors.leaveName?.message} />
           <div className="space-y-1.5">
-            <label className="block text-sm font-medium text-gray-700">Description</label>
+            <label className="block text-sm font-medium text-gray-700">
+              Description <span className="text-gray-400 font-normal">(Optional)</span>
+            </label>
             <textarea
               {...register('description')}
               rows={2}
               className="w-full px-3.5 py-2.5 text-sm rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary-500 resize-none"
             />
           </div>
-          <Input label="Maximum Days Per Year" type="number" {...register('maxDays', { required: 'Required', valueAsNumber: true, min: { value: 1, message: 'Min 1' } })} error={errors.maxDays?.message} />
-          <div className="flex gap-6">
-            <label className="flex items-center gap-2 text-sm cursor-pointer">
-              <input type="checkbox" {...register('isPaid')} className="w-4 h-4 accent-primary-600" />
-              Paid Leave
+          <Input label="Maximum Days Per Year" required type="number" {...register('maxDays', { required: 'Required', valueAsNumber: true, min: { value: 1, message: 'Min 1' } })} error={errors.maxDays?.message} />
+          <div className="space-y-2">
+            <label className="block text-sm font-medium text-gray-700">
+              Leave Options <span className="text-red-500">*</span>
             </label>
-            <label className="flex items-center gap-2 text-sm cursor-pointer">
-              <input type="checkbox" {...register('carryForward')} className="w-4 h-4 accent-primary-600" />
-              Carry Forward
-            </label>
+            <div className="flex gap-6">
+              <label className="flex items-center gap-2 text-sm cursor-pointer">
+                <input type="checkbox" {...register('isPaid')} className="w-4 h-4 accent-primary-600" />
+                Paid Leave
+              </label>
+              <label className="flex items-center gap-2 text-sm cursor-pointer">
+                <input type="checkbox" {...register('carryForward')} className="w-4 h-4 accent-primary-600" />
+                Carry Forward
+              </label>
+            </div>
+            <p className="text-xs text-amber-700 bg-amber-50 border border-amber-100 rounded-lg px-3 py-2">
+              Unchecking <strong>Paid Leave</strong> marks this as an <strong>Unpaid (LOP)</strong> leave type — salary will be deducted for days taken.
+            </p>
           </div>
           <div className="flex gap-3 pt-2">
             <Button type="submit" isLoading={isPending} className="flex-1">{editing ? 'Update' : 'Create'} Leave Type</Button>

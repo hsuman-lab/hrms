@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, AlertTriangle } from 'lucide-react';
 import Link from 'next/link';
 import DashboardLayout from '@/components/layout/DashboardLayout';
 import { Card } from '@/components/ui/Card';
@@ -60,10 +60,12 @@ export default function ApplyLeavePage() {
 
   const selectedTypeId = watch('leaveTypeId');
   const selectedBalance = balances?.find((b) => b.leave_type_id === selectedTypeId);
+  const selectedType    = (leaveTypes ?? []).find((lt) => lt.id === selectedTypeId);
+  const isUnpaid        = selectedType && !selectedType.is_paid;
 
   const typeOptions = (leaveTypes ?? []).map((lt) => ({
     value: lt.id,
-    label: `${lt.leave_name} (${lt.is_paid ? 'Paid' : 'Unpaid'})`,
+    label: `${lt.leave_name} (${lt.is_paid ? 'Paid' : 'Unpaid — LOP'})`,
   }));
 
   return (
@@ -80,16 +82,27 @@ export default function ApplyLeavePage() {
           <form onSubmit={handleSubmit((d) => mutation.mutate(d))} className="space-y-5">
             <Select
               label="Leave Type"
+              required
               {...register('leaveTypeId')}
               options={typeOptions}
               placeholder="Select leave type"
               error={errors.leaveTypeId?.message}
             />
 
-            {selectedBalance && (
+            {selectedBalance && !isUnpaid && (
               <div className="p-3 rounded-xl bg-primary-50 text-sm text-primary-700 flex justify-between">
                 <span>Available Balance:</span>
                 <span className="font-semibold">{selectedBalance.remaining_days} days remaining</span>
+              </div>
+            )}
+
+            {isUnpaid && (
+              <div className="flex gap-3 p-3.5 rounded-xl bg-amber-50 border border-amber-200 text-sm text-amber-800">
+                <AlertTriangle className="w-4 h-4 shrink-0 mt-0.5 text-amber-500" />
+                <div>
+                  <p className="font-semibold">Unpaid Leave — Loss of Pay (LOP)</p>
+                  <p className="text-xs mt-0.5 text-amber-700">Days taken on this leave type will be deducted from your salary as Loss of Pay. Salary is prorated accordingly.</p>
+                </div>
               </div>
             )}
 
@@ -97,6 +110,7 @@ export default function ApplyLeavePage() {
               <Input
                 label="Start Date"
                 type="date"
+                required
                 min={new Date().toISOString().split('T')[0]}
                 {...register('startDate')}
                 error={errors.startDate?.message}
@@ -104,6 +118,7 @@ export default function ApplyLeavePage() {
               <Input
                 label="End Date"
                 type="date"
+                required
                 min={new Date().toISOString().split('T')[0]}
                 {...register('endDate')}
                 error={errors.endDate?.message}
@@ -111,7 +126,7 @@ export default function ApplyLeavePage() {
             </div>
 
             <div className="space-y-1.5">
-              <label className="block text-sm font-medium text-gray-700">Reason (Optional)</label>
+              <label className="block text-sm font-medium text-gray-700">Reason <span className="text-gray-400 font-normal">(Optional)</span></label>
               <textarea
                 {...register('reason')}
                 rows={4}

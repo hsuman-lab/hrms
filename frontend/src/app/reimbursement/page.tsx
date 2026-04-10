@@ -57,7 +57,7 @@ function SubmitModal({ onClose }: { onClose: () => void }) {
         <div className="space-y-4">
           {/* Category tiles */}
           <div>
-            <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Category *</label>
+            <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Category <span className="text-red-500">*</span></label>
             <div className="grid grid-cols-5 gap-2">
               {CATEGORIES.map((c) => (
                 <button key={c.value} type="button"
@@ -77,14 +77,14 @@ function SubmitModal({ onClose }: { onClose: () => void }) {
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Amount (₹) *</label>
+              <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Amount (₹) <span className="text-red-500">*</span></label>
               <input type="number" min="1" step="0.01" value={form.amount}
                 onChange={(e) => setForm({ ...form, amount: e.target.value })}
                 placeholder="e.g. 1500"
                 className="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary-500" />
             </div>
             <div>
-              <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Bill Date *</label>
+              <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Bill Date <span className="text-red-500">*</span></label>
               <input type="date" value={form.billDate}
                 onChange={(e) => setForm({ ...form, billDate: e.target.value })}
                 className="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary-500" />
@@ -92,7 +92,7 @@ function SubmitModal({ onClose }: { onClose: () => void }) {
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Description * <span className="text-gray-400 font-normal">(min 5 chars)</span></label>
+            <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Description <span className="text-red-500">*</span> <span className="text-gray-400 font-normal normal-case">(min 5 chars)</span></label>
             <textarea rows={3} value={form.description}
               onChange={(e) => setForm({ ...form, description: e.target.value })}
               placeholder="Describe the expense — e.g. Cab fare from office to client site on project day"
