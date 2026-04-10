@@ -7,9 +7,8 @@ const fmt = (n: number) =>
   new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(n);
 
 export async function downloadSalarySlipPdf(record: PayrollRecord, employeeName: string, employeeCode: string, department: string) {
-  const jsPDFModule = await import('jspdf');
-  const jsPDF = jsPDFModule.default;
-  await import('jspdf-autotable');
+  const { default: jsPDF } = await import('jspdf');
+  const { default: autoTable } = await import('jspdf-autotable');
 
   const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
   const pageW = doc.internal.pageSize.getWidth();
@@ -120,8 +119,7 @@ export async function downloadSalarySlipPdf(record: PayrollRecord, employeeName:
   const grossRowIndex      = earningRows.length - 1;
   const totalDeductionIndex = allRows.length - 1;
 
-  // @ts-expect-error jspdf-autotable attaches to prototype
-  doc.autoTable({
+  autoTable(doc, {
     startY: y,
     margin: { left: 14, right: 14 },
     head: [['Component', 'Type', 'Amount']],
@@ -134,7 +132,7 @@ export async function downloadSalarySlipPdf(record: PayrollRecord, employeeName:
       1: { cellWidth: 35 },
       2: { cellWidth: 'auto', halign: 'right' },
     },
-    willDrawCell: (data: { section: string; row: { index: number }; cell: { styles: { fontStyle: string; fillColor: number[] } } }) => {
+    willDrawCell: (data: import('jspdf-autotable').CellHookData) => {
       if (data.section === 'body' && (data.row.index === grossRowIndex || data.row.index === totalDeductionIndex)) {
         data.cell.styles.fontStyle = 'bold';
         data.cell.styles.fillColor = [224, 247, 250];
@@ -142,8 +140,8 @@ export async function downloadSalarySlipPdf(record: PayrollRecord, employeeName:
     },
   });
 
-  // @ts-expect-error autoTable adds finalY
-  const afterTable: number = doc.lastAutoTable.finalY + 6;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const afterTable: number = (doc as any).lastAutoTable.finalY + 6;
 
   // ── Net Pay box ─────────────────────────────────────────────────────────────
   doc.setFillColor(8, 145, 178);
