@@ -13,7 +13,7 @@ import { Department } from '@/types';
 import { useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
 
-type FormData = { name: string; description?: string };
+type FormData = { name: string; description: string };
 
 export default function DepartmentsPage() {
   const queryClient = useQueryClient();
@@ -25,7 +25,7 @@ export default function DepartmentsPage() {
     queryFn: () => hrService.getDepartments(),
   });
 
-  const { register, handleSubmit, reset, setValue } = useForm<FormData>();
+  const { register, handleSubmit, reset, setValue, formState: { errors } } = useForm<FormData>();
 
   const createMutation = useMutation({
     mutationFn: (d: FormData) => hrService.createDepartment(d.name, d.description),
@@ -109,14 +109,26 @@ export default function DepartmentsPage() {
 
       <Modal isOpen={showModal} onClose={closeModal} title={editing ? 'Edit Department' : 'New Department'} size="sm">
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-          <Input label="Department Name" {...register('name', { required: true })} />
+          <Input
+            label="Department Name"
+            required
+            placeholder="e.g. Engineering, Finance, HR"
+            {...register('name', { required: 'Department name is required' })}
+            error={errors.name?.message}
+          />
           <div className="space-y-1.5">
-            <label className="block text-sm font-medium text-gray-700">Description</label>
+            <label className="block text-sm font-medium text-gray-700">
+              Description <span className="text-red-500">*</span>
+            </label>
             <textarea
-              {...register('description')}
+              {...register('description', { required: 'Description is required' })}
               rows={3}
-              className="w-full px-3.5 py-2.5 text-sm rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary-500 resize-none"
+              placeholder="Brief description of this department's function"
+              className={`w-full px-3.5 py-2.5 text-sm rounded-xl border focus:outline-none focus:ring-2 focus:ring-primary-500 resize-none transition-colors ${
+                errors.description ? 'border-red-300 focus:ring-red-400' : 'border-gray-200 hover:border-primary-300'
+              }`}
             />
+            {errors.description && <p className="text-xs text-red-500">{errors.description.message}</p>}
           </div>
           <div className="flex gap-3 pt-2">
             <Button type="submit" isLoading={createMutation.isPending || updateMutation.isPending} className="flex-1">
