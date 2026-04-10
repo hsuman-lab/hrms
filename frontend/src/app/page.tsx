@@ -7,7 +7,7 @@ import {
   ArrowRight, Star, Globe, Zap, Lock, ChevronDown,
 } from 'lucide-react';
 import { useState } from 'react';
-import MyHRLogo from '@/components/ui/MyHRLogo';
+import MyHRLogo from '@/components/ui/HarshHRLogo';
 
 // ─── Data ─────────────────────────────────────────────────────────────────────
 
