@@ -217,3 +217,230 @@ export interface ApiResponse<T = unknown> {
   message?: string;
   error?: string;
 }
+
+// ── ESS ──────────────────────────────────────────────────────────────────────
+export interface EmployeeAddress {
+  id: string;
+  address_type: string;
+  line1: string;
+  line2?: string | null;
+  city?: string | null;
+  state?: string | null;
+  pincode?: string | null;
+  country: string;
+}
+
+export interface BankDetail {
+  id: string;
+  bank_name: string;
+  account_number: string;
+  ifsc_code: string;
+  account_type: string;
+  branch?: string | null;
+  is_verified: boolean;
+}
+
+export interface EmergencyContact {
+  id: string;
+  name: string;
+  relationship: string;
+  phone: string;
+  email?: string | null;
+  is_primary: boolean;
+}
+
+export interface EmployeeDocument {
+  id: string;
+  doc_type: string;
+  doc_name: string;
+  file_url: string;
+  file_size?: number | null;
+  uploaded_at: string;
+  expires_at?: string | null;
+  is_verified: boolean;
+}
+
+// ── PMS ──────────────────────────────────────────────────────────────────────
+export interface PerformanceGoal {
+  id: string;
+  title: string;
+  description?: string | null;
+  goal_type: string;
+  metric_type: string;
+  target_value?: string | null;
+  achieved_value?: string | null;
+  weightage?: number | null;
+  due_date?: string | null;
+  review_period?: string | null;
+  status: string;
+  progress_pct: number;
+  created_at: string;
+}
+
+export interface SelfAssessment {
+  id: string;
+  review_period: string;
+  strengths?: string | null;
+  improvements?: string | null;
+  achievements?: string | null;
+  rating_self?: number | null;
+  overall_comment?: string | null;
+  status: string;
+  submitted_at?: string | null;
+  manager_review?: ManagerReview | null;
+}
+
+export interface ManagerReview {
+  id: string;
+  review_period: string;
+  rating_manager?: number | null;
+  strengths?: string | null;
+  improvements?: string | null;
+  overall_comment?: string | null;
+  final_rating?: number | null;
+  status: string;
+  reviewed_at?: string | null;
+}
+
+export interface Feedback360 {
+  id: string;
+  review_period: string;
+  relationship: string;
+  strengths?: string | null;
+  improvements?: string | null;
+  rating?: number | null;
+  is_anonymous: boolean;
+  submitted_at?: string | null;
+  giver?: { first_name: string | null; last_name: string | null };
+}
+
+export interface EmployeeSkill {
+  id: string;
+  skill_name: string;
+  category: string;
+  proficiency: string;
+}
+
+export interface SkillDevelopmentPlan {
+  id: string;
+  skill_name: string;
+  current_level?: string | null;
+  target_level?: string | null;
+  action_items?: string | null;
+  resources?: string | null;
+  target_date?: string | null;
+  status: string;
+}
+
+// ── Learning — Certificates ───────────────────────────────────────────────────
+export interface Certificate {
+  id: string;
+  cert_name: string;
+  issuing_body?: string | null;
+  issue_date: string;
+  expiry_date?: string | null;
+  credential_id?: string | null;
+  file_url?: string | null;
+  is_verified: boolean;
+}
+
+// ── Org ───────────────────────────────────────────────────────────────────────
+export interface JobPosting {
+  id: string;
+  title: string;
+  department_id?: string | null;
+  description?: string | null;
+  requirements?: string | null;
+  location?: string | null;
+  employment_type: string;
+  is_internal: boolean;
+  status: string;
+  salary_range?: string | null;
+  closing_date?: string | null;
+  created_at: string;
+  department?: { department_name: string } | null;
+  applications?: { id: string; status: string; applied_at: string }[];
+}
+
+export interface JobApplication {
+  id: string;
+  status: string;
+  cover_note?: string | null;
+  applied_at: string;
+  job_posting: JobPosting;
+}
+
+// ── Onboarding ────────────────────────────────────────────────────────────────
+export interface OnboardingTask {
+  id: string;
+  task_title: string;
+  description?: string | null;
+  category: string;
+  is_mandatory: boolean;
+  due_days?: number | null;
+}
+
+export interface OnboardingChecklist {
+  id: string;
+  status: string;
+  completed_at?: string | null;
+  remarks?: string | null;
+  task: OnboardingTask;
+}
+
+export interface PolicyAcknowledgement {
+  id: string;
+  policy_name: string;
+  policy_version: string;
+  acknowledged_at: string;
+}
+
+export interface OnboardingExperience {
+  id: string;
+  overall_rating?: number | null;
+  buddy_rating?: number | null;
+  process_rating?: number | null;
+  feedback?: string | null;
+  submitted_at?: string | null;
+}
+
+// ── Offboarding ───────────────────────────────────────────────────────────────
+export interface Resignation {
+  id: string;
+  resignation_date: string;
+  last_working_date?: string | null;
+  reason?: string | null;
+  notice_period_days?: number | null;
+  status: string;
+  submitted_at: string;
+  approvals?: Array<{
+    id: string;
+    status?: string | null;
+    remarks?: string | null;
+    approved_at?: string | null;
+    approver: { first_name: string | null; last_name: string | null };
+  }>;
+}
+
+export interface ExitInterview {
+  id: string;
+  reason_leaving?: string | null;
+  job_satisfaction?: number | null;
+  manager_rating?: number | null;
+  culture_rating?: number | null;
+  rehire_eligible: boolean;
+  suggestions?: string | null;
+  conducted_at?: string | null;
+}
+
+export interface FnFSettlement {
+  id: string;
+  gratuity?: number | null;
+  leave_encashment?: number | null;
+  bonus?: number | null;
+  deductions?: number | null;
+  net_payable?: number | null;
+  payment_date?: string | null;
+  status: string;
+  remarks?: string | null;
+}

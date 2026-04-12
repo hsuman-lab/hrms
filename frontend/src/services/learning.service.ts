@@ -1,5 +1,5 @@
 import api from './api';
-import { ApiResponse, Course, CourseEnrollment, LearningStats } from '@/types';
+import { ApiResponse, Course, CourseEnrollment, LearningStats, Certificate } from '@/types';
 
 export const learningService = {
   // Employee
@@ -57,5 +57,22 @@ export const learningService = {
   getStats: async () => {
     const res = await api.get<ApiResponse<LearningStats>>('/learning/stats');
     return res.data.data!;
+  },
+
+  // Certificates
+  getMyCertificates: async () => {
+    const res = await api.get<ApiResponse<Certificate[]>>('/learning/certificates');
+    return res.data.data!;
+  },
+  addCertificate: async (data: object) => {
+    const res = await api.post<ApiResponse<Certificate>>('/learning/certificates', data);
+    return res.data.data!;
+  },
+  updateCertificate: async (id: string, data: object) => {
+    const res = await api.patch<ApiResponse<Certificate>>(`/learning/certificates/${id}`, data);
+    return res.data.data!;
+  },
+  deleteCertificate: async (id: string) => {
+    await api.delete(`/learning/certificates/${id}`);
   },
 };

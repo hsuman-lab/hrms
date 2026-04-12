@@ -1,0 +1,35 @@
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = require("express");
+const auth_routes_1 = __importDefault(require("./auth.routes"));
+const employee_routes_1 = __importDefault(require("./employee.routes"));
+const attendance_routes_1 = __importDefault(require("./attendance.routes"));
+const leave_routes_1 = __importDefault(require("./leave.routes"));
+const payroll_routes_1 = __importDefault(require("./payroll.routes"));
+const hr_routes_1 = __importDefault(require("./hr.routes"));
+const learning_routes_1 = __importDefault(require("./learning.routes"));
+const reimbursement_routes_1 = __importDefault(require("./reimbursement.routes"));
+const ess_routes_1 = __importDefault(require("./ess.routes"));
+const pms_routes_1 = __importDefault(require("./pms.routes"));
+const org_routes_1 = __importDefault(require("./org.routes"));
+const onboarding_routes_1 = __importDefault(require("./onboarding.routes"));
+const offboarding_routes_1 = __importDefault(require("./offboarding.routes"));
+const router = (0, express_1.Router)();
+router.use('/auth', auth_routes_1.default);
+router.use('/employees', employee_routes_1.default);
+router.use('/attendance', attendance_routes_1.default);
+router.use('/leave', leave_routes_1.default);
+router.use('/payroll', payroll_routes_1.default);
+router.use('/hr', hr_routes_1.default);
+router.use('/learning', learning_routes_1.default);
+router.use('/reimbursements', reimbursement_routes_1.default);
+router.use('/ess', ess_routes_1.default);
+router.use('/pms', pms_routes_1.default);
+router.use('/org', org_routes_1.default);
+router.use('/onboarding', onboarding_routes_1.default);
+router.use('/offboarding', offboarding_routes_1.default);
+exports.default = router;
+//# sourceMappingURL=index.js.map

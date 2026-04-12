@@ -125,6 +125,68 @@ export class LearningService {
     ]);
     return { totalCourses, mandatoryCourses, totalEnrollments, completed, overdue };
   }
+
+  // ── Certificates ─────────────────────────────────────────────────────────────
+
+  async getMyCertificates(employeeId: string) {
+    return prisma.certificate.findMany({
+      where: { employee_id: employeeId },
+      orderBy: { issue_date: 'desc' },
+    });
+  }
+
+  async addCertificate(employeeId: string, data: {
+    certName: string;
+    issuingBody?: string;
+    issueDate: string;
+    expiryDate?: string;
+    credentialId?: string;
+    fileUrl?: string;
+  }) {
+    return prisma.certificate.create({
+      data: {
+        employee_id: employeeId,
+        cert_name: data.certName,
+        issuing_body: data.issuingBody,
+        issue_date: new Date(data.issueDate),
+        expiry_date: data.expiryDate ? new Date(data.expiryDate) : undefined,
+        credential_id: data.credentialId,
+        file_url: data.fileUrl,
+      },
+    });
+  }
+
+  async updateCertificate(id: string, employeeId: string, data: {
+    certName?: string;
+    issuingBody?: string;
+    expiryDate?: string;
+    credentialId?: string;
+    fileUrl?: string;
+  }) {
+    const cert = await prisma.certificate.findUnique({ where: { id } });
+    if (!cert || cert.employee_id !== employeeId) {
+      throw new AppError('Certificate not found', 404);
+    }
+    return prisma.certificate.update({
+      where: { id },
+      data: {
+        cert_name: data.certName,
+        issuing_body: data.issuingBody,
+        expiry_date: data.expiryDate ? new Date(data.expiryDate) : undefined,
+        credential_id: data.credentialId,
+        file_url: data.fileUrl,
+      },
+    });
+  }
+
+  async deleteCertificate(id: string, employeeId: string) {
+    const cert = await prisma.certificate.findUnique({ where: { id } });
+    if (!cert || cert.employee_id !== employeeId) {
+      throw new AppError('Certificate not found', 404);
+    }
+    await prisma.certificate.delete({ where: { id } });
+    return { success: true };
+  }
 }
 
 export default new LearningService();

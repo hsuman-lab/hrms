@@ -1,0 +1,2 @@
+export declare const logAudit: (userId: string | undefined, action: string, entityType: string, entityId?: string, metadata?: Record<string, unknown>) => Promise<void>;
+//# sourceMappingURL=audit.d.ts.map

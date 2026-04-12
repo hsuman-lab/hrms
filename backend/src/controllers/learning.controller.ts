@@ -104,6 +104,36 @@ export class LearningController {
       res.json({ success: true, data: enrollment });
     } catch (err) { next(err); }
   }
+
+  // ── Employee: certificates ──────────────────────────────────────────────────
+
+  async getMyCertificates(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
+    try {
+      if (!req.user?.employeeId) { res.status(400).json({ success: false, error: 'No employee record' }); return; }
+      res.json({ success: true, data: await learningService.getMyCertificates(req.user.employeeId) });
+    } catch (err) { next(err); }
+  }
+
+  async addCertificate(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
+    try {
+      if (!req.user?.employeeId) { res.status(400).json({ success: false, error: 'No employee record' }); return; }
+      res.status(201).json({ success: true, data: await learningService.addCertificate(req.user.employeeId, req.body) });
+    } catch (err) { next(err); }
+  }
+
+  async updateCertificate(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
+    try {
+      if (!req.user?.employeeId) { res.status(400).json({ success: false, error: 'No employee record' }); return; }
+      res.json({ success: true, data: await learningService.updateCertificate(req.params.id, req.user.employeeId, req.body) });
+    } catch (err) { next(err); }
+  }
+
+  async deleteCertificate(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
+    try {
+      if (!req.user?.employeeId) { res.status(400).json({ success: false, error: 'No employee record' }); return; }
+      res.json(await learningService.deleteCertificate(req.params.id, req.user.employeeId));
+    } catch (err) { next(err); }
+  }
 }
 
 export default new LearningController();

@@ -21,4 +21,10 @@ router.post('/courses/:id/enroll',    authorize('HR', 'HR_MANAGER'), (req, res, 
 router.get('/courses/:id/enrollments',authorize('HR', 'HR_MANAGER'), (req, res, next) => learningController.getCourseEnrollments(req, res, next));
 router.get('/stats',                  authorize('HR', 'HR_MANAGER'), (req, res, next) => learningController.getLearningStats(req, res, next));
 
+// Certificates
+router.get('/certificates',           (req, res, next) => learningController.getMyCertificates(req, res, next));
+router.post('/certificates',          (req, res, next) => learningController.addCertificate(req, res, next));
+router.patch('/certificates/:id',     (req, res, next) => learningController.updateCertificate(req, res, next));
+router.delete('/certificates/:id',    (req, res, next) => learningController.deleteCertificate(req, res, next));
+
 export default router;

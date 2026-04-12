@@ -5,6 +5,7 @@ import { usePathname } from 'next/navigation';
 import {
   LayoutDashboard, Clock, CalendarDays, Users, CheckSquare,
   IndianRupee, BarChart3, FileText, Building2, LogOut, BookOpen, Receipt,
+  UserCircle, Target, Network, ClipboardList, DoorOpen,
 } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { useAuth } from '@/contexts/AuthContext';
@@ -26,6 +27,11 @@ const NAV_ITEMS: NavItem[] = [
   { label: 'My Payroll',      href: '/payroll',            icon: IndianRupee },
   { label: 'Reimbursements',  href: '/reimbursement',      icon: Receipt },
   { label: 'My Learning',     href: '/learning',           icon: BookOpen },
+  { label: 'My Profile (ESS)',href: '/ess',                icon: UserCircle },
+  { label: 'Performance',     href: '/pms',                icon: Target },
+  { label: 'My Organization', href: '/org',                icon: Network },
+  { label: 'Onboarding',      href: '/onboarding',         icon: ClipboardList },
+  { label: 'Offboarding',     href: '/offboarding',        icon: DoorOpen },
   { label: 'Team',            href: '/manager/team',       icon: Users,       roles: ['EMPLOYEE_MANAGER', 'HR', 'HR_MANAGER'] },
   { label: 'Employees',       href: '/hr/employees',       icon: Users,       roles: ['HR', 'HR_MANAGER'] },
   { label: 'L&D Courses',     href: '/hr/learning',        icon: BookOpen,    roles: ['HR', 'HR_MANAGER'] },

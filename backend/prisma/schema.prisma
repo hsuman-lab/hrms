@@ -37,11 +37,12 @@ model User {
 }
 
 model Department {
-  id              String     @id @default(uuid())
+  id              String       @id @default(uuid())
   department_name String
   description     String?
-  created_at      DateTime   @default(now())
+  created_at      DateTime     @default(now())
   employees       Employee[]
+  job_postings    JobPosting[]
 
   @@map("departments")
 }
@@ -74,6 +75,34 @@ model Employee {
   salary_structure  SalaryStructure?
   reimbursements    Reimbursement[]
   reimbursement_approvals ReimbursementApproval[]
+  // ESS
+  addresses              EmployeeAddress[]
+  bank_details           BankDetail[]
+  emergency_contacts     EmergencyContact[]
+  documents              EmployeeDocument[]
+  // PMS
+  goals                  PerformanceGoal[]
+  self_assessments       SelfAssessment[]
+  manager_reviews_given  ManagerReview[]  @relation("ReviewerReviews")
+  manager_reviews_received ManagerReview[] @relation("RevieweeReviews")
+  feedback_given         Feedback360[]    @relation("FeedbackGiver")
+  feedback_received      Feedback360[]    @relation("FeedbackReceiver")
+  skills                 EmployeeSkill[]
+  skill_plans            SkillDevelopmentPlan[]
+  // Learning
+  certificates           Certificate[]
+  // Org
+  job_applications       JobApplication[]
+  // Onboarding
+  onboarding_tasks       OnboardingChecklist[]
+  policy_acknowledgements PolicyAcknowledgement[]
+  onboarding_experience  OnboardingExperience?
+  // Offboarding
+  resignation            Resignation?
+  resignation_approvals  ResignationApproval[]
+  exit_interview         ExitInterview?
+  fnf_settlement         FnFSettlement?
+  offboarding_tasks      OffboardingChecklist[]
 
   @@map("employees")
 }
@@ -285,3 +314,402 @@ model AuditLog {
   @@index([user_id, created_at])
   @@map("audit_logs")
 }
+
+// ── ESS — Employee Self Service ──────────────────────────────────────────────
+model EmployeeAddress {
+  id           String   @id @default(uuid())
+  employee_id  String
+  employee     Employee @relation(fields: [employee_id], references: [id], onDelete: Cascade)
+  address_type String   @default("CURRENT") // CURRENT | PERMANENT
+  line1        String
+  line2        String?
+  city         String?
+  state        String?
+  pincode      String?
+  country      String   @default("India")
+  created_at   DateTime @default(now())
+  updated_at   DateTime @updatedAt
+
+  @@index([employee_id])
+  @@map("employee_addresses")
+}
+
+model BankDetail {
+  id                 String   @id @default(uuid())
+  employee_id        String   @unique
+  employee           Employee @relation(fields: [employee_id], references: [id], onDelete: Cascade)
+  bank_name          String
+  account_number     String
+  ifsc_code          String
+  account_type       String   @default("SAVINGS") // SAVINGS | CURRENT
+  branch             String?
+  is_verified        Boolean  @default(false)
+  created_at         DateTime @default(now())
+  updated_at         DateTime @updatedAt
+
+  @@map("bank_details")
+}
+
+model EmergencyContact {
+  id           String   @id @default(uuid())
+  employee_id  String
+  employee     Employee @relation(fields: [employee_id], references: [id], onDelete: Cascade)
+  name         String
+  relationship String
+  phone        String
+  email        String?
+  is_primary   Boolean  @default(false)
+  created_at   DateTime @default(now())
+  updated_at   DateTime @updatedAt
+
+  @@index([employee_id])
+  @@map("emergency_contacts")
+}
+
+model EmployeeDocument {
+  id            String   @id @default(uuid())
+  employee_id   String
+  employee      Employee @relation(fields: [employee_id], references: [id], onDelete: Cascade)
+  doc_type      String   // AADHAAR | PAN | PASSPORT | OFFER_LETTER | CERTIFICATE | OTHER
+  doc_name      String
+  file_url      String
+  file_size     Int?
+  uploaded_at   DateTime @default(now())
+  expires_at    DateTime?
+  is_verified   Boolean  @default(false)
+
+  @@index([employee_id, doc_type])
+  @@map("employee_documents")
+}
+
+// ── PMS — Performance Management ─────────────────────────────────────────────
+model PerformanceGoal {
+  id             String    @id @default(uuid())
+  employee_id    String
+  employee       Employee  @relation(fields: [employee_id], references: [id], onDelete: Cascade)
+  title          String
+  description    String?
+  goal_type      String    @default("INDIVIDUAL") // INDIVIDUAL | TEAM | DEPARTMENTAL
+  metric_type    String    @default("OKR")        // OKR | KPI | SMART
+  target_value   String?
+  achieved_value String?
+  weightage      Decimal?  @db.Decimal(5, 2)
+  due_date       DateTime? @db.Date
+  review_period  String?   // e.g. "Q1-FY2026"
+  status         String    @default("ACTIVE")     // ACTIVE | COMPLETED | CANCELLED
+  progress_pct   Int       @default(0)
+  created_at     DateTime  @default(now())
+  updated_at     DateTime  @updatedAt
+
+  @@index([employee_id, status])
+  @@map("performance_goals")
+}
+
+model SelfAssessment {
+  id              String   @id @default(uuid())
+  employee_id     String
+  employee        Employee @relation(fields: [employee_id], references: [id], onDelete: Cascade)
+  review_period   String
+  strengths       String?
+  improvements    String?
+  achievements    String?
+  rating_self     Decimal? @db.Decimal(3, 1)
+  overall_comment String?
+  submitted_at    DateTime?
+  status          String   @default("DRAFT") // DRAFT | SUBMITTED
+  created_at      DateTime @default(now())
+  updated_at      DateTime @updatedAt
+  manager_review  ManagerReview?
+
+  @@unique([employee_id, review_period])
+  @@map("self_assessments")
+}
+
+model ManagerReview {
+  id                  String         @id @default(uuid())
+  self_assessment_id  String         @unique
+  self_assessment     SelfAssessment @relation(fields: [self_assessment_id], references: [id], onDelete: Cascade)
+  reviewee_id         String
+  reviewee            Employee       @relation("RevieweeReviews", fields: [reviewee_id], references: [id])
+  reviewer_id         String
+  reviewer            Employee       @relation("ReviewerReviews", fields: [reviewer_id], references: [id])
+  review_period       String
+  rating_manager      Decimal?       @db.Decimal(3, 1)
+  strengths           String?
+  improvements        String?
+  overall_comment     String?
+  final_rating        Decimal?       @db.Decimal(3, 1)
+  status              String         @default("PENDING") // PENDING | IN_REVIEW | COMPLETED
+  reviewed_at         DateTime?
+  created_at          DateTime       @default(now())
+  updated_at          DateTime       @updatedAt
+
+  @@index([reviewee_id, review_period])
+  @@map("manager_reviews")
+}
+
+model Feedback360 {
+  id              String   @id @default(uuid())
+  giver_id        String
+  giver           Employee @relation("FeedbackGiver", fields: [giver_id], references: [id])
+  receiver_id     String
+  receiver        Employee @relation("FeedbackReceiver", fields: [receiver_id], references: [id])
+  review_period   String
+  relationship    String   // PEER | MANAGER | SUBORDINATE | SELF
+  strengths       String?
+  improvements    String?
+  rating          Decimal? @db.Decimal(3, 1)
+  is_anonymous    Boolean  @default(true)
+  submitted_at    DateTime?
+  created_at      DateTime @default(now())
+
+  @@index([receiver_id, review_period])
+  @@map("feedback_360")
+}
+
+model EmployeeSkill {
+  id           String   @id @default(uuid())
+  employee_id  String
+  employee     Employee @relation(fields: [employee_id], references: [id], onDelete: Cascade)
+  skill_name   String
+  category     String   @default("TECHNICAL") // TECHNICAL | SOFT | LEADERSHIP | DOMAIN
+  proficiency  String   @default("BEGINNER")  // BEGINNER | INTERMEDIATE | ADVANCED | EXPERT
+  endorsed_by  String?
+  created_at   DateTime @default(now())
+  updated_at   DateTime @updatedAt
+
+  @@unique([employee_id, skill_name])
+  @@map("employee_skills")
+}
+
+model SkillDevelopmentPlan {
+  id           String    @id @default(uuid())
+  employee_id  String
+  employee     Employee  @relation(fields: [employee_id], references: [id], onDelete: Cascade)
+  skill_name   String
+  current_level String?
+  target_level  String?
+  action_items  String?
+  resources     String?
+  target_date   DateTime? @db.Date
+  status        String    @default("IN_PROGRESS") // IN_PROGRESS | COMPLETED | ON_HOLD
+  created_at    DateTime  @default(now())
+  updated_at    DateTime  @updatedAt
+
+  @@index([employee_id, status])
+  @@map("skill_development_plans")
+}
+
+// ── Learning — Certificates ───────────────────────────────────────────────────
+model Certificate {
+  id             String    @id @default(uuid())
+  employee_id    String
+  employee       Employee  @relation(fields: [employee_id], references: [id], onDelete: Cascade)
+  cert_name      String
+  issuing_body   String?
+  issue_date     DateTime  @db.Date
+  expiry_date    DateTime? @db.Date
+  credential_id  String?
+  file_url       String?
+  is_verified    Boolean   @default(false)
+  created_at     DateTime  @default(now())
+  updated_at     DateTime  @updatedAt
+
+  @@index([employee_id])
+  @@map("certificates")
+}
+
+// ── Org — Job Postings ────────────────────────────────────────────────────────
+model JobPosting {
+  id              String           @id @default(uuid())
+  title           String
+  department_id   String?
+  department      Department?      @relation(fields: [department_id], references: [id])
+  description     String?
+  requirements    String?
+  location        String?
+  employment_type String           @default("FULL_TIME") // FULL_TIME | PART_TIME | CONTRACT
+  is_internal     Boolean          @default(true)
+  status          String           @default("OPEN")      // OPEN | CLOSED | ON_HOLD
+  posted_by       String?
+  salary_range    String?
+  closing_date    DateTime?        @db.Date
+  created_at      DateTime         @default(now())
+  updated_at      DateTime         @updatedAt
+  applications    JobApplication[]
+
+  @@index([status, is_internal])
+  @@map("job_postings")
+}
+
+model JobApplication {
+  id            String     @id @default(uuid())
+  job_posting_id String
+  job_posting   JobPosting @relation(fields: [job_posting_id], references: [id], onDelete: Cascade)
+  employee_id   String
+  employee      Employee   @relation(fields: [employee_id], references: [id])
+  cover_note    String?
+  status        String     @default("APPLIED") // APPLIED | SHORTLISTED | REJECTED | HIRED
+  applied_at    DateTime   @default(now())
+  updated_at    DateTime   @updatedAt
+
+  @@unique([job_posting_id, employee_id])
+  @@index([employee_id, status])
+  @@map("job_applications")
+}
+
+// ── Onboarding ───────────────────────────────────────────────────────────────
+model OnboardingTask {
+  id           String                @id @default(uuid())
+  task_title   String
+  description  String?
+  category     String                @default("GENERAL") // GENERAL | DOCUMENT | IT | HR | POLICY
+  is_mandatory Boolean               @default(true)
+  due_days     Int?                  // days from joining_date
+  created_at   DateTime              @default(now())
+  checklists   OnboardingChecklist[]
+
+  @@map("onboarding_tasks")
+}
+
+model OnboardingChecklist {
+  id               String         @id @default(uuid())
+  employee_id      String
+  employee         Employee       @relation(fields: [employee_id], references: [id], onDelete: Cascade)
+  task_id          String
+  task             OnboardingTask @relation(fields: [task_id], references: [id])
+  status           String         @default("PENDING") // PENDING | IN_PROGRESS | COMPLETED
+  completed_at     DateTime?
+  remarks          String?
+
+  @@unique([employee_id, task_id])
+  @@index([employee_id, status])
+  @@map("onboarding_checklists")
+}
+
+model PolicyAcknowledgement {
+  id              String   @id @default(uuid())
+  employee_id     String
+  employee        Employee @relation(fields: [employee_id], references: [id], onDelete: Cascade)
+  policy_name     String
+  policy_version  String   @default("1.0")
+  acknowledged_at DateTime @default(now())
+  ip_address      String?
+
+  @@unique([employee_id, policy_name, policy_version])
+  @@index([employee_id])
+  @@map("policy_acknowledgements")
+}
+
+model OnboardingExperience {
+  id              String   @id @default(uuid())
+  employee_id     String   @unique
+  employee        Employee @relation(fields: [employee_id], references: [id], onDelete: Cascade)
+  overall_rating  Int?     // 1-5
+  buddy_rating    Int?
+  process_rating  Int?
+  feedback        String?
+  submitted_at    DateTime?
+  created_at      DateTime @default(now())
+
+  @@map("onboarding_experience")
+}
+
+// ── Offboarding ──────────────────────────────────────────────────────────────
+model Resignation {
+  id                String              @id @default(uuid())
+  employee_id       String              @unique
+  employee          Employee            @relation(fields: [employee_id], references: [id], onDelete: Cascade)
+  resignation_date  DateTime            @db.Date
+  last_working_date DateTime?           @db.Date
+  reason            String?
+  notice_period_days Int?
+  status            String              @default("PENDING") // PENDING | APPROVED | REJECTED | WITHDRAWN
+  submitted_at      DateTime            @default(now())
+  updated_at        DateTime            @updatedAt
+  approvals         ResignationApproval[]
+  exit_interview    ExitInterview?
+  fnf_settlement    FnFSettlement?
+
+  @@map("resignations")
+}
+
+model ResignationApproval {
+  id             String      @id @default(uuid())
+  resignation_id String
+  resignation    Resignation @relation(fields: [resignation_id], references: [id], onDelete: Cascade)
+  approver_id    String
+  approver       Employee    @relation(fields: [approver_id], references: [id])
+  status         String?     // PENDING | APPROVED | REJECTED
+  remarks        String?
+  approved_at    DateTime?
+
+  @@map("resignation_approvals")
+}
+
+model ExitInterview {
+  id              String      @id @default(uuid())
+  employee_id     String      @unique
+  employee        Employee    @relation(fields: [employee_id], references: [id], onDelete: Cascade)
+  resignation_id  String      @unique
+  resignation     Resignation @relation(fields: [resignation_id], references: [id], onDelete: Cascade)
+  reason_leaving  String?
+  job_satisfaction Int?       // 1-5
+  manager_rating  Int?
+  culture_rating  Int?
+  rehire_eligible Boolean     @default(true)
+  suggestions     String?
+  conducted_by    String?
+  conducted_at    DateTime?
+  created_at      DateTime    @default(now())
+
+  @@map("exit_interviews")
+}
+
+model FnFSettlement {
+  id               String      @id @default(uuid())
+  employee_id      String      @unique
+  employee         Employee    @relation(fields: [employee_id], references: [id], onDelete: Cascade)
+  resignation_id   String      @unique
+  resignation      Resignation @relation(fields: [resignation_id], references: [id], onDelete: Cascade)
+  gratuity         Decimal?    @db.Decimal(12, 2)
+  leave_encashment Decimal?    @db.Decimal(12, 2)
+  bonus            Decimal?    @db.Decimal(12, 2)
+  deductions       Decimal?    @db.Decimal(12, 2)
+  net_payable      Decimal?    @db.Decimal(12, 2)
+  payment_date     DateTime?   @db.Date
+  status           String      @default("PENDING") // PENDING | PROCESSED | PAID
+  remarks          String?
+  created_at       DateTime    @default(now())
+  updated_at       DateTime    @updatedAt
+
+  @@map("fnf_settlements")
+}
+
+model OffboardingTask {
+  id           String                 @id @default(uuid())
+  task_title   String
+  description  String?
+  category     String                 @default("GENERAL") // GENERAL | IT | FINANCE | HR | ADMIN
+  is_mandatory Boolean                @default(true)
+  created_at   DateTime               @default(now())
+  checklists   OffboardingChecklist[]
+
+  @@map("offboarding_tasks")
+}
+
+model OffboardingChecklist {
+  id           String          @id @default(uuid())
+  employee_id  String
+  employee     Employee        @relation(fields: [employee_id], references: [id], onDelete: Cascade)
+  task_id      String
+  task         OffboardingTask @relation(fields: [task_id], references: [id])
+  status       String          @default("PENDING") // PENDING | COMPLETED
+  completed_at DateTime?
+  remarks      String?
+
+  @@unique([employee_id, task_id])
+  @@index([employee_id, status])
+  @@map("offboarding_checklists")
+}
+
