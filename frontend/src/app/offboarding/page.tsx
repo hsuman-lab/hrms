@@ -19,6 +19,18 @@ const TABS = [
   { id: 'checklist' as Tab,   label: 'Checklist',       icon: ClipboardList },
 ];
 
+const RESIGNATION_REASONS = [
+  { value: 'personal',          label: 'Personal' },
+  { value: 'health',            label: 'Health' },
+  { value: 'medical',           label: 'Medical' },
+  { value: 'compensation',      label: 'Compensation' },
+  { value: 'monetary_gain',     label: 'Monetary Gain' },
+  { value: 'work_life_balance', label: 'Work-Life Balance' },
+  { value: 'environment',       label: 'Work Environment' },
+  { value: 'learning',          label: 'Learning & Growth' },
+  { value: 'others',            label: 'Others' },
+];
+
 const STATUS_COLOR: Record<string, string> = {
   PENDING: 'bg-yellow-50 text-yellow-700',
   APPROVED: 'bg-green-50 text-green-700',
@@ -33,7 +45,7 @@ function ResignationTab() {
   const qc = useQueryClient();
   const { data: resignation } = useQuery<Resignation | null>({ queryKey: ['my-resignation'], queryFn: offboardingService.getMyResignation });
   const [showForm, setShowForm] = useState(false);
-  const [form, setForm] = useState({ resignationDate: '', reason: '', noticePeriodDays: '30' });
+  const [form, setForm] = useState({ resignationDate: '', reasonCategory: '', reasonDetail: '', noticePeriodDays: '30' });
 
   const submitMutation = useMutation({
     mutationFn: (d: object) => offboardingService.submitResignation(d),
@@ -67,15 +79,24 @@ function ResignationTab() {
               <input type="number" value={form.noticePeriodDays} onChange={e => setForm({ ...form, noticePeriodDays: e.target.value })} className="input-field" />
             </div>
             <div>
-              <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wide mb-1">Reason</label>
-              <textarea value={form.reason} onChange={e => setForm({ ...form, reason: e.target.value })} rows={3} className="input-field resize-none" placeholder="Optional reason for resignation" />
+              <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wide mb-1">Reason for Resignation</label>
+              <select value={form.reasonCategory} onChange={e => setForm({ ...form, reasonCategory: e.target.value, reasonDetail: '' })} className="input-field">
+                <option value="">Select a reason…</option>
+                {RESIGNATION_REASONS.map(r => <option key={r.value} value={r.value}>{r.label}</option>)}
+              </select>
             </div>
+            {form.reasonCategory === 'others' && (
+              <div>
+                <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wide mb-1">Please specify</label>
+                <textarea value={form.reasonDetail} onChange={e => setForm({ ...form, reasonDetail: e.target.value })} rows={2} className="input-field resize-none" placeholder="Describe your reason…" />
+              </div>
+            )}
             <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-3 flex items-start gap-2">
               <AlertTriangle className="w-4 h-4 text-yellow-500 shrink-0 mt-0.5" />
               <p className="text-xs text-yellow-700">This will trigger a notification to your reporting manager for approval.</p>
             </div>
             <div className="flex gap-3">
-              <button onClick={() => submitMutation.mutate({ ...form, noticePeriodDays: +form.noticePeriodDays })} disabled={!form.resignationDate || submitMutation.isPending}
+              <button onClick={() => submitMutation.mutate({ resignationDate: form.resignationDate, noticePeriodDays: +form.noticePeriodDays, reason: form.reasonCategory === 'others' ? (form.reasonDetail || 'Others') : RESIGNATION_REASONS.find(r => r.value === form.reasonCategory)?.label || '' })} disabled={!form.resignationDate || submitMutation.isPending}
                 className="btn-primary px-4 py-2 text-sm">Submit Resignation</button>
               <button onClick={() => setShowForm(false)} className="btn-secondary px-4 py-2 text-sm">Cancel</button>
             </div>
