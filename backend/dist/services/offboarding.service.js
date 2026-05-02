@@ -47,21 +47,16 @@ class OffboardingService {
         });
         // Auto-create pending approval record for reporting manager
         if (employee.manager_id) {
-            await database_1.default.resignationApproval.upsert({
-                where: {
-                    // Use raw query workaround — create if none exists
-                    id: (await database_1.default.resignationApproval.findFirst({
-                        where: { resignation_id: resignation.id, approver_id: employee.manager_id },
-                    }))?.id || 'new',
-                },
-                update: { status: 'PENDING', approved_at: null, remarks: null },
-                create: {
-                    resignation_id: resignation.id,
-                    approver_id: employee.manager_id,
-                    status: 'PENDING',
-                },
-            }).catch(async () => {
-                // If upsert fails due to 'new' not existing, just create
+            const existingApproval = await database_1.default.resignationApproval.findFirst({
+                where: { resignation_id: resignation.id, approver_id: employee.manager_id },
+            });
+            if (existingApproval) {
+                await database_1.default.resignationApproval.update({
+                    where: { id: existingApproval.id },
+                    data: { status: 'PENDING', approved_at: null, remarks: null },
+                });
+            }
+            else {
                 await database_1.default.resignationApproval.create({
                     data: {
                         resignation_id: resignation.id,
@@ -69,7 +64,7 @@ class OffboardingService {
                         status: 'PENDING',
                     },
                 });
-            });
+            }
         }
         return resignation;
     }
